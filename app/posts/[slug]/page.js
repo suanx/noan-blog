@@ -34,10 +34,14 @@ export async function generateMetadata({ params }) {
 }
 
 export async function generateStaticParams() {
-  const result = await executeQuery(
-    "SELECT slug FROM posts WHERE published = 1 ORDER BY created_at DESC"
-  );
-  return result.rows.map((row) => ({ slug: row.slug }));
+  try {
+    const result = await executeQuery(
+      "SELECT slug FROM posts WHERE published = 1 ORDER BY created_at DESC"
+    );
+    return result.rows.map((row) => ({ slug: row.slug }));
+  } catch {
+    return [];
+  }
 }
 
 export default async function PostPage({ params }) {

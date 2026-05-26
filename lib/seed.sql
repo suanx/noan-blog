@@ -1,7 +1,6 @@
--- 示例管理员密码: Admin123 (PBKDF2-SHA256, 100000 iterations)
--- 实际部署时请使用 hashPassword() 生成
+-- 管理员密码: Admin123 (PBKDF2-SHA256, 100000 iterations)
 INSERT INTO users (email, password_hash, name, role)
-VALUES ('admin@noanblog.com', '$pbkdf2$100000$YWRtaW5zYWx0$ZmFrZWhhc2hkYXRh', 'Admin', 'admin');
+VALUES ('admin@noanblog.com', '$pbkdf2$100000$GQCMLb7dN5iLhGS2CVq6Sw==$R31Dexnxx/GwlBLZLTmW2OFy88ChFRKGe0hBYq5PnNA=', 'Admin', 'admin');
 
 INSERT INTO categories (name, slug) VALUES
   ('Technology',   'technology'),
