@@ -2,17 +2,15 @@ name: Build and Deploy to EdgeOne Pages
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
   pull_request:
-    branches:
-      - master
+    branches: [master]
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment environment'
+        description: Deployment environment
         required: true
-        default: 'preview'
+        default: preview
         type: choice
         options:
           - preview
@@ -21,24 +19,20 @@ on:
 env:
   PROJECT_NAME: noan-blog
   BUILD_OUTPUT: .next
-  NODE_VERSION: '22.11.0'
+  NODE_VERSION: 22.11.0
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment || 'preview' }}
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
@@ -46,80 +40,19 @@ jobs:
       - name: Build project
         run: npm run build
         env:
-          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://noan-blog.edgeone.app' }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || '' }}
           TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
           TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
-
-      - name: Verify build output
-        run: |
-          echo "Checking build output..."
-          if [ ! -d "${{ env.BUILD_OUTPUT }}" ]; then
-            echo "Build output directory not found: ${{ env.BUILD_OUTPUT }}"
-            exit 1
-          fi
-          echo "Build output verified: ${{ env.BUILD_OUTPUT }}"
 
       - name: Deploy to EdgeOne Pages
         id: deploy
         run: |
-          echo "Deploying to EdgeOne Pages..."
-          echo "Project: ${{ env.PROJECT_NAME }}"
-          echo "Environment: ${{ github.event.inputs.environment || 'preview' }}"
+          DEPLOY_ENV="${{ github.event.inputs.environment || 'preview' }}"
+          echo "Deploying to $DEPLOY_ENV..."
           
-          DEPLOY_CMD="npx edgeone pages deploy ${{ env.BUILD_OUTPUT }} -n ${{ env.PROJECT_NAME }} -t ${{ secrets.EDGEONE_API_TOKEN }}"
-          
-          if [ "${{ github.event.inputs.environment || 'preview' }}" = "production" ]; then
-            DEPLOY_CMD="$DEPLOY_CMD -e production"
-          else
-            DEPLOY_CMD="$DEPLOY_CMD -e preview"
+          CMD="npx edgeone pages deploy ${{ env.BUILD_OUTPUT }} -n ${{ env.PROJECT_NAME }} -t ${{ secrets.EDGEONE_API_TOKEN }}"
+          if [ "$DEPLOY_ENV" = "production" ]; then
+            CMD="$CMD -e production"
           fi
           
-          DEPLOY_OUTPUT=$(eval "$DEPLOY_CMD 2>&1") || true
-          echo "$DEPLOY_OUTPUT"
-          
-          if echo "$DEPLOY_OUTPUT" | grep -q "EDGEONE_DEPLOY_URL="; then
-            DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep "EDGEONE_DEPLOY_URL=" | cut -d'=' -f2-)
-            echo "DEPLOY_URL=$DEPLOY_URL" >> $GITHUB_OUTPUT
-            echo "Deploy URL: $DEPLOY_URL"
-          elif echo "$DEPLOY_OUTPUT" | grep -q "https://"; then
-            DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep -oE 'https://[^ ]+')
-            echo "DEPLOY_URL=$DEPLOY_URL" >> $GITHUB_OUTPUT
-            echo "Deploy URL: $DEPLOY_URL"
-          fi
-
-      - name: Deploy summary
-        if: always()
-        run: |
-          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Project | ${{ env.PROJECT_NAME }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Environment | ${{ github.event.inputs.environment || 'preview' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Branch | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Commit | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
-          if [ -n "${{ steps.deploy.outputs.DEPLOY_URL }}" ]; then
-            echo "| Deploy URL | ${{ steps.deploy.outputs.DEPLOY_URL }} |" >> $GITHUB_STEP_SUMMARY
-          fi
-
-  health-check:
-    runs-on: ubuntu-latest
-    needs: build-and-deploy
-    if: github.event.inputs.environment == 'production' && success()
-    
-    steps:
-      - name: Health check
-        run: |
-          DEPLOY_URL="${{ needs.build-and-deploy.outputs.DEPLOY_URL }}"
-          if [ -z "$DEPLOY_URL" ]; then
-            echo "No deploy URL available, skipping health check"
-            exit 0
-          fi
-          
-          echo "Running health check..."
-          
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$DEPLOY_URL/")
-          echo "Homepage: $STATUS"
-          
-          API_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$DEPLOY_URL/api/hello")
-          echo "API /hello: $API_STATUS"
+          $CMD 2>&1
