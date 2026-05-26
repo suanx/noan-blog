@@ -113,10 +113,11 @@ turso db shell <数据库名> < lib/seed.sql
 │   ├── migration3.sql          # 文章翻译表
 │   ├── migration4.sql          # SEO 字段
 │   └── seed.sql                # 示例数据
-├── proxy.ts                    # i18n 中间件（替代 middleware.ts）
-├── next.config.ts              # Next.js 配置
-├── edgeone.json                # EdgeOne Pages 部署配置
-└── eslint.config.mjs           # ESLint 配置
+├── middleware.ts                 # i18n 中间件（路径路由）
+├── next.config.ts                # Next.js 配置
+├── edgeone.json                  # EdgeOne 部署配置
+├── DEPLOY.md                     # 部署指南
+└── eslint.config.mjs             # ESLint 配置
 ```
 
 ## API 文档
@@ -156,28 +157,49 @@ turso db shell <数据库名> < lib/seed.sql
 | POST   | `/api/views/[slug]`               | 增加阅读计数   | 无   |
 | GET    | `/api/search?q=xxx`               | 全文搜索       | 无   |
 
-## 部署
+## 部署到 EdgeOne Pages
 
-### EdgeOne Pages
+详细部署指南请参考 [DEPLOY.md](./DEPLOY.md)。
+
+### 快速开始
 
 ```bash
-# 安装 EdgeOne CLI
-npm install -g edgeone-cli
+# 1. 配置 GitHub Secrets
+#    Settings → Secrets → Actions → New secret
+#    Name: EDGEONE_API_TOKEN
+#    Value: 你的 EdgeOne API Token
 
-# 登录
-edgeone login
+# 2. 配置 EdgeOne Pages 环境变量
+#    EdgeOne 控制台 → 项目 → 设置 → 环境变量
+#    添加: TURSO_DATABASE_URL, TURSO_AUTH_TOKEN, JWT_SECRET, ADMIN_TOKEN
 
-# 预览部署
-edgeone pages deploy
+# 3. 执行数据库迁移
+turso db shell noan-blog < lib/schema.sql
+turso db shell noan-blog < lib/migration.sql
+turso db shell noan-blog < lib/migration2.sql
+turso db shell noan-blog < lib/migration3.sql
+turso db shell noan-blog < lib/migration4.sql
+turso db shell noan-blog < lib/migration5.sql
+turso db shell noan-blog "INSERT INTO posts_fts(rowid,title,content,excerpt) SELECT id,title,content,excerpt FROM posts;"
+turso db shell noan-blog < lib/seed.sql
 
-# 生产部署
-edgeone pages deploy --prod
+# 4. 推送代码到 main 分支（自动触发 preview 部署）
+git push origin main
+
+# 5. 手动触发生产部署
+#    GitHub Actions → Run workflow → 选择 production 环境
 ```
 
-### GitHub Actions
+### 本地测试部署
 
-`.github/workflows/deploy-edgeone.yml` 已配置自动部署，提交到 `main` 分支即可触发。
+```bash
+# 预览部署
+npm run deploy:preview
 
-## 许可证
+# 生产部署
+npm run deploy:production
+```
+
+### 许可证
 
 MIT
