@@ -3,56 +3,19 @@ name: Build and Deploy to EdgeOne Pages
 on:
   push:
     branches: [master]
-  pull_request:
-    branches: [master]
   workflow_dispatch:
-    inputs:
-      environment:
-        description: Deployment environment
-        required: true
-        default: preview
-        type: choice
-        options:
-          - preview
-          - production
-
-env:
-  PROJECT_NAME: noan-blog
-  BUILD_OUTPUT: .next
-  NODE_VERSION: 22.11.0
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: 22.11.0
           cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build project
-        run: npm run build
+      - run: npm ci
+      - run: npm run build
+      - run: npx edgeone pages deploy .next -n noan-blog -t ${{ secrets.EDGEONE_API_TOKEN }}
         env:
-          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || '' }}
-          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
-          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
-
-      - name: Deploy to EdgeOne Pages
-        id: deploy
-        run: |
-          DEPLOY_ENV="${{ github.event.inputs.environment || 'preview' }}"
-          echo "Deploying to $DEPLOY_ENV..."
-          
-          CMD="npx edgeone pages deploy ${{ env.BUILD_OUTPUT }} -n ${{ env.PROJECT_NAME }} -t ${{ secrets.EDGEONE_API_TOKEN }}"
-          if [ "$DEPLOY_ENV" = "production" ]; then
-            CMD="$CMD -e production"
-          fi
-          
-          $CMD 2>&1
+          NEXT_PUBLIC_SITE_URL: ''
