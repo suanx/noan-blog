@@ -6,10 +6,11 @@ export async function POST(request) {
   try {
     await requireAdmin(request);
 
-    const { content } = await request.json();
+    let body$; try { body$ = await request.json(); } catch { body$ = JSON.parse(await request.text()); }
+    const { content } = body$;
     if (!content || content.trim().length < 10) {
       return NextResponse.json(
-        { error: "Content must be at least 10 characters" },
+        { error: "正文至少需要 10 个字符" },
         { status: 400 }
       );
     }
@@ -25,7 +26,7 @@ export async function POST(request) {
       return NextResponse.json({ error: err.message }, { status: err.status });
     }
     return NextResponse.json(
-      { error: err.message || "AI summary generation failed" },
+      { error: err.message || "AI 摘要生成失败" },
       { status: 500 }
     );
   }

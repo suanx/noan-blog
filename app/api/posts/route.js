@@ -101,7 +101,7 @@ export async function GET(request) {
     if (err.status) {
       return NextResponse.json({ error: err.message }, { status: err.status });
     }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "服务器内部错误" }, { status: 500 });
   }
 }
 
@@ -109,11 +109,11 @@ export async function POST(request) {
   try {
     const user = await requireAdmin(request);
 
-    const body = await request.json();
+    let body$; try { body$ = await request.json(); } catch { body$ = JSON.parse(await request.text()); }
     const validated = PostSchema.safeParse(body);
     if (!validated.success) {
       return NextResponse.json(
-        { error: "Validation failed", details: validated.error.errors },
+        { error: "数据验证失败", details: validated.error.errors },
         { status: 400 }
       );
     }
@@ -172,8 +172,8 @@ export async function POST(request) {
       return NextResponse.json({ error: err.message }, { status: err.status });
     }
     if (err.code === "SQLITE_UNIQUE") {
-      return NextResponse.json({ error: "A post with this slug already exists" }, { status: 409 });
+      return NextResponse.json({ error: "此 slug 已存在" }, { status: 409 });
     }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "服务器内部错误" }, { status: 500 });
   }
 }

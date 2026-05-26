@@ -6,10 +6,11 @@ export async function POST(request) {
   try {
     await requireAdmin(request);
 
-    const { title, content } = await request.json();
+    let body$; try { body$ = await request.json(); } catch { body$ = JSON.parse(await request.text()); }
+    const { title, content } = body$;
     if (!title || !content || content.trim().length < 10) {
       return NextResponse.json(
-        { error: "Both title and content (min 10 chars) are required" },
+        { error: "标题和正文（至少10个字符）均为必填" },
         { status: 400 }
       );
     }
@@ -40,7 +41,7 @@ export async function POST(request) {
       return NextResponse.json({ error: err.message }, { status: err.status });
     }
     return NextResponse.json(
-      { error: err.message || "AI tag generation failed" },
+      { error: err.message || "AI 标签生成失败" },
       { status: 500 }
     );
   }

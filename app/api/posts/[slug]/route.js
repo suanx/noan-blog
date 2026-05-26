@@ -23,7 +23,7 @@ export async function GET(request, { params }) {
     );
 
     if (!result.rows.length) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+      return NextResponse.json({ error: "文章未找到" }, { status: 404 });
     }
 
     const post = result.rows[0];
@@ -57,7 +57,7 @@ export async function GET(request, { params }) {
     if (err.status) {
       return NextResponse.json({ error: err.message }, { status: err.status });
     }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "服务器内部错误" }, { status: 500 });
   }
 }
 
@@ -66,12 +66,12 @@ export async function PUT(request, { params }) {
     const user = await requireAdmin(request);
 
     const { slug } = await params;
-    const body = await request.json();
+    let body$; try { body$ = await request.json(); } catch { body$ = JSON.parse(await request.text()); }
     const lang = body.language || "en";
 
     const existing = await executeQuery("SELECT id FROM posts WHERE slug = ?", [slug]);
     if (!existing.rows.length) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+      return NextResponse.json({ error: "文章未找到" }, { status: 404 });
     }
     const postId = existing.rows[0].id;
 
@@ -204,7 +204,7 @@ export async function PUT(request, { params }) {
     if (err.status) {
       return NextResponse.json({ error: err.message }, { status: err.status });
     }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "服务器内部错误" }, { status: 500 });
   }
 }
 
@@ -216,7 +216,7 @@ export async function DELETE(request, { params }) {
 
     const existing = await executeQuery("SELECT id FROM posts WHERE slug = ?", [slug]);
     if (!existing.rows.length) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+      return NextResponse.json({ error: "文章未找到" }, { status: 404 });
     }
 
     const postId = existing.rows[0].id;
@@ -240,12 +240,12 @@ export async function DELETE(request, { params }) {
       // Edge Runtime 中 revalidatePath 可能不可用，忽略
     }
 
-    return NextResponse.json({ message: "Post deleted" });
+    return NextResponse.json({ message: "文章已删除" });
   } catch (err) {
     console.error("DELETE /api/posts/[slug] failed:", err);
     if (err.status) {
       return NextResponse.json({ error: err.message }, { status: err.status });
     }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "服务器内部错误" }, { status: 500 });
   }
 }

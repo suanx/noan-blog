@@ -13,6 +13,6 @@ export async function GET() {
     );
     return NextResponse.json(result.rows);
   } catch {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "服务器内部错误" }, { status: 500 });
   }
 }

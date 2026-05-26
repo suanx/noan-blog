@@ -42,15 +42,15 @@ export default function CommentsSection({ postId, slug }) {
       });
       const data = await res.json();
       if (res.ok) {
-        setMessage("Comment submitted for review.");
+        setMessage("评论已提交审核。");
         setMessageType("success");
         setContent("");
       } else {
-        setMessage(data.error || "Failed to submit comment");
+        setMessage(data.error || "提交评论失败");
         setMessageType("error");
       }
     } catch {
-      setMessage("Network error");
+      setMessage("网络错误");
       setMessageType("error");
     } finally {
       setSubmitting(false);
@@ -58,37 +58,37 @@ export default function CommentsSection({ postId, slug }) {
   }
 
   return (
-    <section className="mt-16 border-t border-zinc-200 pt-10 dark:border-zinc-800">
+    <section className="mt-16 border-t border-[var(--border)] pt-10">
       <h2 className="mb-6 text-xl font-semibold">
-        Comments {!loading && `(${comments.length})`}
+        评论 {!loading && `(${comments.length})`}
       </h2>
 
       {loading ? (
         <div className="space-y-4">
           {[1, 2].map((i) => (
             <div key={i} className="animate-pulse space-y-2">
-              <div className="h-3 w-24 rounded bg-zinc-200 dark:bg-zinc-800" />
-              <div className="h-4 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
+              <div className="h-3 w-24 rounded bg-[var(--bg-secondary)]" />
+              <div className="h-4 w-3/4 rounded bg-[var(--bg-secondary)]" />
             </div>
           ))}
         </div>
       ) : comments.length > 0 ? (
         <div className="mb-10 space-y-6">
           {comments.map((c) => (
-            <div key={c.id} className="border-l-2 border-zinc-300 pl-4 dark:border-zinc-700">
+            <div key={c.id} className="border-l-2 border-[var(--border)] pl-4">
               <div className="mb-1 text-sm font-medium">{c.author_name}</div>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400">{c.content}</p>
-              <time className="mt-1 block text-xs text-zinc-400">
-                {new Date(c.created_at).toLocaleDateString()}
+              <p className="text-sm text-[var(--text-secondary)]">{c.content}</p>
+              <time className="mt-1 block text-xs text-[var(--text-tertiary)]">
+                {new Date(c.created_at).toLocaleDateString("zh-CN")}
               </time>
             </div>
           ))}
         </div>
       ) : (
-        <p className="mb-8 text-sm text-zinc-500">No comments yet.</p>
+        <p className="mb-8 text-sm text-[var(--text-secondary)]">暂无评论</p>
       )}
 
-      <h3 className="mb-4 text-base font-medium">Leave a comment</h3>
+      <h3 className="mb-4 text-base font-medium">发表评论</h3>
 
       {message && (
         <div
@@ -107,33 +107,33 @@ export default function CommentsSection({ postId, slug }) {
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Your name *"
+            placeholder="你的名字 *"
             required
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800"
+            className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm outline-none transition focus:border-[var(--accent)]"
           />
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             type="email"
-            placeholder="Your email *"
+            placeholder="你的邮箱 *"
             required
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800"
+            className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm outline-none transition focus:border-[var(--accent)]"
           />
         </div>
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Write a comment... *"
+          placeholder="写评论... *"
           required
           rows={4}
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800"
+          className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm outline-none transition focus:border-[var(--accent)]"
         />
         <button
           type="submit"
           disabled={submitting}
-          className="rounded-lg bg-zinc-900 px-5 py-2 text-sm font-medium text-white transition hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+          className="rounded-xl bg-[var(--text)] px-6 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50 dark:bg-white dark:text-[var(--text)]"
         >
-          {submitting ? "Submitting..." : "Submit Comment"}
+          {submitting ? "提交中..." : "提交评论"}
         </button>
       </form>
     </section>

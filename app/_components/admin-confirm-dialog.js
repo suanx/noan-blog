@@ -13,13 +13,13 @@ export default function ConfirmDialog({ open, title, message, onConfirm, onCance
             onClick={onCancel}
             className="rounded-lg border border-zinc-300 px-4 py-2 text-sm transition hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
           >
-            Cancel
+            取消
           </button>
           <button
             onClick={onConfirm}
             className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
           >
-            Delete
+            删除
           </button>
         </div>
       </div>

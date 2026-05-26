@@ -21,8 +21,8 @@ export default function SearchBox() {
       <input
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        placeholder="Search..."
-        className="w-36 rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm outline-none transition focus:w-48 focus:border-blue-400 dark:border-zinc-700 dark:bg-zinc-800 dark:focus:border-blue-500"
+        placeholder="搜索..."
+        className="w-32 rounded-lg border border-[var(--border)] bg-transparent px-3 py-1.5 text-sm outline-none transition focus:w-40 focus:border-[var(--accent)]"
       />
     </form>
   );

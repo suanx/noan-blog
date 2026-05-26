@@ -75,7 +75,7 @@ export default function PostForm({ post, categories, tags, onSubmit, onCancel })
 
   async function handleAiSummary() {
     if (!content || content.trim().length < 10) {
-      setAiError("Content must be at least 10 characters to generate a summary");
+      setAiError("内容至少需要 10 个字符才能生成摘要");
       return;
     }
     setAiLoading((prev) => ({ ...prev, summary: true }));
@@ -84,7 +84,7 @@ export default function PostForm({ post, categories, tags, onSubmit, onCancel })
       const res = await aiApi("/api/ai/summary", { content });
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error || "Failed to generate summary");
+        throw new Error(err.error || "生成摘要失败");
       }
       const data = await res.json();
       setExcerpt(data.summary);
@@ -97,7 +97,7 @@ export default function PostForm({ post, categories, tags, onSubmit, onCancel })
 
   async function handleAiTags() {
     if (!title || !content || content.trim().length < 10) {
-      setAiError("Title and content (min 10 chars) are required to generate tags");
+      setAiError("标题和内容（至少10字符）才能生成标签");
       return;
     }
     setAiLoading((prev) => ({ ...prev, tags: true }));
@@ -106,7 +106,7 @@ export default function PostForm({ post, categories, tags, onSubmit, onCancel })
       const res = await aiApi("/api/ai/tags", { title, content });
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error || "Failed to generate tags");
+        throw new Error(err.error || "生成标签失败");
       }
       const data = await res.json();
       const tagNames = data.tags || [];
@@ -134,7 +134,7 @@ export default function PostForm({ post, categories, tags, onSubmit, onCancel })
 
   async function handleAiSeo() {
     if (!title || !content || content.trim().length < 10) {
-      setAiError("Title and content (min 10 chars) are required for SEO optimization");
+      setAiError("标题和内容（至少10字符）才能优化 SEO");
       return;
     }
     setAiLoading((prev) => ({ ...prev, seo: true }));
@@ -143,7 +143,7 @@ export default function PostForm({ post, categories, tags, onSubmit, onCancel })
       const res = await aiApi("/api/ai/seo", { title, content, existingSummary: excerpt });
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error || "Failed to generate SEO metadata");
+        throw new Error(err.error || "生成 SEO 元数据失败");
       }
       const data = await res.json();
       if (data.seoTitle) setSeoTitle(data.seoTitle);
@@ -183,11 +183,11 @@ export default function PostForm({ post, categories, tags, onSubmit, onCancel })
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="mb-1 block text-sm font-medium">Language</label>
+        <label className="mb-1 block text-sm font-medium">语言</label>
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800"
+          className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm outline-none transition focus:border-[#4945FF] focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:focus:bg-zinc-800"
         >
           <option value="en">English</option>
           <option value="zh">中文</option>
@@ -196,30 +196,30 @@ export default function PostForm({ post, categories, tags, onSubmit, onCancel })
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-sm font-medium">Title *</label>
+          <label className="mb-1 block text-sm font-medium">标题 *</label>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800"
+            className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm outline-none transition focus:border-[#4945FF] focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:focus:bg-zinc-800"
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium">Slug *</label>
+          <label className="mb-1 block text-sm font-medium">链接 *</label>
           <input
             value={slug}
             onChange={(e) => setSlug(e.target.value)}
             required
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800"
+            className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm outline-none transition focus:border-[#4945FF] focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:focus:bg-zinc-800"
           />
         </div>
       </div>
 
       <div>
         <div className="mb-1 flex items-center justify-between">
-          <label className="text-sm font-medium">Excerpt</label>
+          <label className="text-sm font-medium">摘要</label>
           <AiButton
-            label="✨ AI Summary"
+            label="✨ AI 摘要"
             loading={aiLoading.summary}
             onClick={handleAiSummary}
             color="bg-purple-100 text-purple-700 hover:bg-purple-200 dark:bg-purple-900/40 dark:text-purple-300"
@@ -229,32 +229,32 @@ export default function PostForm({ post, categories, tags, onSubmit, onCancel })
           value={excerpt}
           onChange={(e) => setExcerpt(e.target.value)}
           rows={2}
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800"
+          className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm outline-none transition focus:border-[#4945FF] focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:focus:bg-zinc-800"
         />
       </div>
 
       <div>
         <label className="mb-1 block text-sm font-medium">
-          Cover Image URL
+          封面图片 URL
         </label>
         <input
           value={coverImage}
           onChange={(e) => setCoverImage(e.target.value)}
           placeholder="https://..."
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800"
+          className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm outline-none transition focus:border-[#4945FF] focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:focus:bg-zinc-800"
         />
       </div>
 
       <div>
         <div className="mb-1 flex items-center justify-between">
-          <label className="text-sm font-medium">Content (Markdown) *</label>
+          <label className="text-sm font-medium">内容 (Markdown) *</label>
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setShowPreview((v) => !v)}
               className="text-xs text-blue-600 hover:underline dark:text-blue-400"
             >
-              {showPreview ? "Edit" : "Preview"}
+              {showPreview ? "编辑" : "预览"}
             </button>
           </div>
         </div>
@@ -281,12 +281,12 @@ export default function PostForm({ post, categories, tags, onSubmit, onCancel })
           onChange={(e) => setPublished(e.target.checked)}
           className="h-4 w-4 rounded border-zinc-300"
         />
-        <label htmlFor="published" className="text-sm">Published</label>
+        <label htmlFor="published" className="text-sm">已发布</label>
       </div>
 
       <div>
         <div className="mb-1 flex items-center justify-between">
-          <label className="text-sm font-medium">Categories</label>
+          <label className="text-sm font-medium">分类</label>
         </div>
         <div className="flex flex-wrap gap-2">
           {categories.map((cat) => (
@@ -308,9 +308,9 @@ export default function PostForm({ post, categories, tags, onSubmit, onCancel })
 
       <div>
         <div className="mb-1 flex items-center justify-between">
-          <label className="text-sm font-medium">Tags</label>
+          <label className="text-sm font-medium">标签</label>
           <AiButton
-            label="🏷️ AI Tags"
+            label="🏷️ AI 标签"
             loading={aiLoading.tags}
             onClick={handleAiTags}
             color="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-300"
@@ -336,9 +336,9 @@ export default function PostForm({ post, categories, tags, onSubmit, onCancel })
 
       <div className="border-t border-zinc-200 pt-4 dark:border-zinc-700">
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-sm font-semibold">SEO Metadata</h3>
+          <h3 className="text-sm font-semibold">SEO 元数据</h3>
           <AiButton
-            label="🔍 AI Optimize SEO"
+            label="🔍 AI 优化 SEO"
             loading={aiLoading.seo}
             onClick={handleAiSeo}
             color="bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-900/40 dark:text-amber-300"
@@ -346,24 +346,24 @@ export default function PostForm({ post, categories, tags, onSubmit, onCancel })
         </div>
         <div className="space-y-3">
           <div>
-            <label className="mb-1 block text-sm font-medium">SEO Title</label>
+            <label className="mb-1 block text-sm font-medium">SEO 标题</label>
             <input
               value={seoTitle}
               onChange={(e) => setSeoTitle(e.target.value)}
-              placeholder="SEO optimized title (25 chars recommended)"
+              placeholder="SEO 优化标题（建议 25 字）"
               maxLength={80}
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800"
+              className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm outline-none transition focus:border-[#4945FF] focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:focus:bg-zinc-800"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium">SEO Description</label>
+            <label className="mb-1 block text-sm font-medium">SEO 描述</label>
             <textarea
               value={seoDescription}
               onChange={(e) => setSeoDescription(e.target.value)}
-              placeholder="SEO meta description (150 chars recommended)"
+              placeholder="SEO 描述文本（建议 150 字）"
               rows={2}
               maxLength={300}
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800"
+              className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm outline-none transition focus:border-[#4945FF] focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:focus:bg-zinc-800"
             />
           </div>
         </div>
@@ -380,16 +380,16 @@ export default function PostForm({ post, categories, tags, onSubmit, onCancel })
           type="button"
           onClick={onCancel}
           disabled={submitting}
-          className="rounded-lg border border-zinc-300 px-4 py-2 text-sm transition hover:bg-zinc-100 disabled:opacity-50 dark:border-zinc-700 dark:hover:bg-zinc-800"
+          className="rounded-lg border border-zinc-200 px-4 py-2 text-sm transition hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:hover:bg-zinc-800"
         >
-          Cancel
+          取消
         </button>
         <button
           type="submit"
           disabled={submitting}
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+          className="rounded-lg bg-[#4945FF] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#3733E0] disabled:opacity-50"
         >
-          {submitting ? "Saving..." : isEdit ? "Update Post" : "Create Post"}
+          {submitting ? "保存中..." : isEdit ? "更新文章" : "创建文章"}
         </button>
       </div>
     </form>

@@ -21,7 +21,7 @@ export async function GET(request) {
     );
     if (recent.rows[0].cnt >= SEARCH_RATE_LIMIT_MAX) {
       return NextResponse.json(
-        { error: "Too many search requests. Please wait a moment." },
+        { error: "搜索请求过于频繁，请稍后再试。" },
         { status: 429 }
       );
     }
@@ -66,6 +66,6 @@ export async function GET(request) {
 
     return NextResponse.json({ rows: result.rows, query: q });
   } catch {
-    return NextResponse.json({ error: "Search failed" }, { status: 500 });
+    return NextResponse.json({ error: "搜索失败" }, { status: 500 });
   }
 }

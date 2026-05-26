@@ -7,7 +7,7 @@ export async function POST(request, { params }) {
 
     const post = await executeQuery("SELECT id FROM posts WHERE slug = ?", [slug]);
     if (!post.rows.length) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+      return NextResponse.json({ error: "文章未找到" }, { status: 404 });
     }
 
     const postId = post.rows[0].id;
@@ -23,6 +23,6 @@ export async function POST(request, { params }) {
     if (err.status) {
       return NextResponse.json({ error: err.message }, { status: err.status });
     }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "服务器内部错误" }, { status: 500 });
   }
 }

@@ -55,31 +55,30 @@ export default async function PostPage({ params }) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-12 text-center">
         <h1 className="mb-4 text-2xl font-bold text-red-600 dark:text-red-400">
-          Post not found
+          文章未找到
         </h1>
         <Link
           href="/"
-          className="text-sm text-blue-600 underline hover:text-blue-800 dark:text-blue-400"
+          className="text-sm text-[var(--accent)] hover:underline"
         >
-          Back to home
+          返回首页
         </Link>
       </div>
     );
   }
 
-  // Fire-and-forget: increment view counter
   fetch(`/api/views/${slug}`, { method: "POST" }).catch(() => {});
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-12">
       <Link
         href="/"
-        className="mb-8 inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
+        className="mb-8 inline-flex items-center gap-1 text-sm text-[var(--text-secondary)] hover:text-[var(--text)]"
       >
         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        Back to home
+        返回首页
       </Link>
 
       <h1 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl">
@@ -87,7 +86,7 @@ export default async function PostPage({ params }) {
       </h1>
 
       {post.cover_image && (
-        <div className="relative mb-8 aspect-[16/9] overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-800">
+        <div className="relative mb-8 aspect-[16/9] overflow-hidden rounded-xl bg-[var(--bg-secondary)]">
           <Image
             src={post.cover_image}
             alt={post.title}
@@ -99,10 +98,10 @@ export default async function PostPage({ params }) {
         </div>
       )}
 
-      <div className="mb-8 flex items-center justify-between text-sm text-zinc-500 dark:text-zinc-400">
+      <div className="mb-8 flex items-center justify-between text-sm text-[var(--text-secondary)]">
         <div className="flex items-center gap-4">
           <time>
-            {new Date(post.created_at).toLocaleDateString("en-US", {
+            {new Date(post.created_at).toLocaleDateString("zh-CN", {
               year: "numeric",
               month: "long",
               day: "numeric",
@@ -119,7 +118,7 @@ export default async function PostPage({ params }) {
         <ShareButton />
       </div>
 
-      <div className="prose prose-zinc max-w-none dark:prose-invert prose-headings:font-semibold prose-a:text-blue-600">
+      <div className="prose prose-zinc max-w-none dark:prose-invert prose-headings:font-semibold prose-a:text-[var(--accent)]">
         <MarkdownContent content={post.content} />
       </div>
 

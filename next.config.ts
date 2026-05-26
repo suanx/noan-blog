@@ -1,17 +1,25 @@
-import type { NextConfig } from "next";
+import originalExport from './next.config.original'
+import type { NextConfig } from 'next'
 
-const nextConfig: NextConfig = {
-  images: {
-    remotePatterns: [
-      { protocol: "https", hostname: "cdn.yourdomain.com" },
-      { protocol: "https", hostname: "images.unsplash.com" },
-      { protocol: "https", hostname: "cdn.jsdelivr.net" },
-      { protocol: "https", hostname: "github.com" },
-      { protocol: "https", hostname: "avatars.githubusercontent.com" },
-    ],
-  },
-  // EdgeOne Pages 使用 Node.js 运行时（兼容 @libsql/client/web）
-  // 如需 Edge Runtime，请在单个 route.js 中添加 export const runtime = 'edge';
-};
+let config: NextConfig;
+if (typeof originalExport === 'function') {
+  // Function-style config: (phase, context) => NextConfig
+  // Wrap it to inject images config after resolution
+  const origFn = originalExport as any;
+  config = ((...args: any[]) => {
+    const resolved = origFn(...args);
+    if (resolved && typeof resolved.then === 'function') {
+      return (resolved as Promise<NextConfig>).then((c: any) => {
+        c.images = { ...c.images, loader: 'custom', loaderFile: './.edgeone/image-loader.mjs' };
+        return c;
+      });
+    }
+    (resolved as any).images = { ...(resolved as any).images, loader: 'custom', loaderFile: './.edgeone/image-loader.mjs' };
+    return resolved;
+  }) as any;
+} else {
+  config = { ...(originalExport as any) };
+  config.images = { ...config.images, loader: 'custom', loaderFile: './.edgeone/image-loader.mjs' };
+}
 
-export default nextConfig;
+export default config;

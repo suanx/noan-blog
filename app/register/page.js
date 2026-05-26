@@ -29,10 +29,10 @@ export default function RegisterPage() {
         localStorage.setItem("user", JSON.stringify(data.user));
         router.push("/admin/dashboard");
       } else {
-        setError(data.error || "Registration failed");
+        setError(data.error || "注册失败");
       }
     } catch {
-      setError("Network error");
+      setError("网络错误");
     } finally {
       setLoading(false);
     }
@@ -40,7 +40,7 @@ export default function RegisterPage() {
 
   return (
     <div className="mx-auto max-w-sm px-4 py-20">
-      <h1 className="mb-6 text-center text-2xl font-bold">Register</h1>
+      <h1 className="mb-6 text-center text-2xl font-bold">注册</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
           <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600 dark:border-red-800 dark:bg-red-950 dark:text-red-400">
@@ -50,39 +50,39 @@ export default function RegisterPage() {
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Name"
+          placeholder="昵称"
           required
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800"
+          className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm outline-none transition focus:border-[var(--accent)]"
         />
         <input
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           type="email"
-          placeholder="Email"
+          placeholder="邮箱"
           required
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800"
+          className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm outline-none transition focus:border-[var(--accent)]"
         />
         <input
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           type="password"
-          placeholder="Password (min 6 characters)"
+          placeholder="密码（至少6位）"
           required
           minLength={6}
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800"
+          className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm outline-none transition focus:border-[var(--accent)]"
         />
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-zinc-900 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+          className="w-full rounded-xl bg-[var(--text)] py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50 dark:bg-white dark:text-[var(--text)]"
         >
-          {loading ? "Registering..." : "Register"}
+          {loading ? "注册中..." : "注册"}
         </button>
       </form>
-      <p className="mt-4 text-center text-sm text-zinc-500">
-        Already have an account?{" "}
-        <Link href="/login" className="text-blue-600 hover:underline dark:text-blue-400">
-          Login
+      <p className="mt-4 text-center text-sm text-[var(--text-secondary)]">
+        已有账号？{" "}
+        <Link href="/login" className="text-[var(--accent)] hover:underline">
+          登录
         </Link>
       </p>
     </div>

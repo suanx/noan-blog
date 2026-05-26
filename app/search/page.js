@@ -14,7 +14,6 @@ function escapeHtml(str) {
 }
 
 function highlight(str) {
-  // FTS5 returns &lt;mark&gt;...&lt;/mark&gt; — safely replace only these entities
   return str.replace(/&lt;mark&gt;/g, "<mark>").replace(/&lt;\/mark&gt;/g, "</mark>");
 }
 
@@ -45,18 +44,18 @@ function SearchResults() {
   }, [q]);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12">
-      <h1 className="mb-2 text-2xl font-bold">Search</h1>
-      <p className="mb-8 text-sm text-zinc-500">
-        {q ? `Results for "${q}"` : "Enter a search term"}
+    <div className="mx-auto max-w-4xl px-4 py-12">
+      <h1 className="mb-2 text-2xl font-bold">搜索</h1>
+      <p className="mb-8 text-sm text-[var(--text-secondary)]">
+        {q ? `"${q}" 的搜索结果` : "输入关键词搜索"}
       </p>
 
       {loading && (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="animate-pulse space-y-2 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
-              <div className="h-5 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
-              <div className="h-4 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div key={i} className="animate-pulse space-y-2 rounded-xl border border-[var(--border)] p-4">
+              <div className="h-5 w-3/4 rounded bg-[var(--bg-secondary)]" />
+              <div className="h-4 w-full rounded bg-[var(--bg-secondary)]" />
             </div>
           ))}
         </div>
@@ -69,7 +68,7 @@ function SearchResults() {
       )}
 
       {!loading && results.length === 0 && q && (
-        <p className="text-sm text-zinc-500">No results found.</p>
+        <p className="text-sm text-[var(--text-secondary)]">未找到相关结果</p>
       )}
 
       {!loading && results.length > 0 && (
@@ -78,20 +77,21 @@ function SearchResults() {
             <Link
               key={post.id}
               href={`/posts/${post.slug}`}
-              className="block rounded-lg border border-zinc-200 p-4 transition hover:shadow-md dark:border-zinc-800"
+              className="card-hover block rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5"
             >
               <h2
-                className="mb-1 text-lg font-semibold"
+                className="mb-2 text-lg font-semibold"
                 dangerouslySetInnerHTML={{ __html: post.title_hl ? sanitizeAndHighlight(post.title_hl) : escapeHtml(post.title) }}
               />
               {post.content_hl && (
                 <p
-                  className="text-sm text-zinc-600 dark:text-zinc-400"
+                  className="text-sm text-[var(--text-secondary)]"
                   dangerouslySetInnerHTML={{ __html: sanitizeAndHighlight(post.content_hl) }}
                 />
               )}
-              <div className="mt-2 text-xs text-zinc-400">
-                {new Date(post.created_at).toLocaleDateString()} &middot; {post.views ?? 0} views
+              <div className="mt-3 flex items-center gap-3 text-xs text-[var(--text-tertiary)]">
+                <time>{new Date(post.created_at).toLocaleDateString("zh-CN")}</time>
+                <span>{post.views ?? 0} 次阅读</span>
               </div>
             </Link>
           ))}
@@ -104,8 +104,8 @@ function SearchResults() {
 export default function SearchPage() {
   return (
     <Suspense fallback={
-      <div className="mx-auto max-w-3xl px-4 py-12">
-        <div className="h-8 w-32 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
+      <div className="mx-auto max-w-4xl px-4 py-12">
+        <div className="h-8 w-32 animate-pulse rounded bg-[var(--bg-secondary)]" />
       </div>
     }>
       <SearchResults />

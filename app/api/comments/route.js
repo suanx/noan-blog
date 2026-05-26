@@ -3,18 +3,18 @@ import { executeQuery } from "@/lib/db";
 
 export async function POST(request) {
   try {
-    const body = await request.json();
+    let body$; try { body$ = await request.json(); } catch { body$ = JSON.parse(await request.text()); }
     const { post_id, author_name, author_email, content } = body;
 
     if (!post_id || !author_name || !author_email || !content) {
       return NextResponse.json(
-        { error: "Missing required fields: post_id, author_name, author_email, content" },
+        { error: "缺少必填字段：post_id、author_name、author_email、content" },
         { status: 400 }
       );
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(author_email)) {
-      return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
+      return NextResponse.json({ error: "邮箱格式无效" }, { status: 400 });
     }
 
     const xff = request.headers.get("x-forwarded-for");
@@ -29,7 +29,7 @@ export async function POST(request) {
 
     if (recent.rows.length > 0) {
       return NextResponse.json(
-        { error: "You commented too recently. Please wait a few minutes." },
+        { error: "评论过于频繁，请稍后再试。" },
         { status: 429 }
       );
     }
@@ -41,10 +41,10 @@ export async function POST(request) {
     );
 
     return NextResponse.json(
-      { message: "Comment submitted for review" },
+      { message: "评论已提交，等待审核" },
       { status: 201 }
     );
   } catch {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "服务器内部错误" }, { status: 500 });
   }
 }

@@ -28,10 +28,10 @@ export default function LoginPage() {
         localStorage.setItem("user", JSON.stringify(data.user));
         router.push("/admin/dashboard");
       } else {
-        setError(data.error || "Login failed");
+        setError(data.error || "登录失败");
       }
     } catch {
-      setError("Network error");
+      setError("网络错误");
     } finally {
       setLoading(false);
     }
@@ -39,7 +39,7 @@ export default function LoginPage() {
 
   return (
     <div className="mx-auto max-w-sm px-4 py-20">
-      <h1 className="mb-6 text-center text-2xl font-bold">Login</h1>
+      <h1 className="mb-6 text-center text-2xl font-bold">登录</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
           <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600 dark:border-red-800 dark:bg-red-950 dark:text-red-400">
@@ -50,30 +50,30 @@ export default function LoginPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           type="email"
-          placeholder="Email"
+          placeholder="邮箱"
           required
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800"
+          className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm outline-none transition focus:border-[var(--accent)]"
         />
         <input
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           type="password"
-          placeholder="Password"
+          placeholder="密码"
           required
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-800"
+          className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm outline-none transition focus:border-[var(--accent)]"
         />
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-zinc-900 py-2 text-sm font-medium text-white hover:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+          className="w-full rounded-xl bg-[var(--text)] py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50 dark:bg-white dark:text-[var(--text)]"
         >
-          {loading ? "Logging in..." : "Login"}
+          {loading ? "登录中..." : "登录"}
         </button>
       </form>
-      <p className="mt-4 text-center text-sm text-zinc-500">
-        Don&apos;t have an account?{" "}
-        <Link href="/register" className="text-blue-600 hover:underline dark:text-blue-400">
-          Register
+      <p className="mt-4 text-center text-sm text-[var(--text-secondary)]">
+        没有账号？{" "}
+        <Link href="/register" className="text-[var(--accent)] hover:underline">
+          注册
         </Link>
       </p>
     </div>
