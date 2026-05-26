@@ -5,6 +5,9 @@ on:
     branches: [master]
   workflow_dispatch:
 
+env:
+  NEXT_PUBLIC_SITE_URL: ''
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -16,6 +19,4 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - run: npx edgeone pages deploy .next -n noan-blog -t ${{ secrets.EDGEONE_API_TOKEN }}
-        env:
-          NEXT_PUBLIC_SITE_URL: ''
+      - run: npx edgeone pages deploy .next -n noan-blog -t "${{ secrets.EDGEONE_API_TOKEN }}" -e production
