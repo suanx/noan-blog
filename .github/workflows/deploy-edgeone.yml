@@ -19,4 +19,4 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - run: npx edgeone pages deploy .next -n noan-blog -t "${{ secrets.EDGEONE_API_TOKEN }}" -e production
+      - run: npx edgeone pages deploy .next -n noan-blog -t "${{ secrets.EDGEONE_API_TOKEN }}" -e production -a overseas
